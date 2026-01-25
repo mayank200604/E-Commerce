@@ -1,0 +1,10 @@
+version: "3.9"
+
+services:
+  backend:
+    image: my-ml-project
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./train.csv:/app/train.csv
+      - ./train_with_quality_label.csv:/app/train_with_quality_label.csv

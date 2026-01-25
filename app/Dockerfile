@@ -18,13 +18,8 @@ COPY model_logistic_regression.pkl .
 COPY tfidf_vectorizer.pkl .
 COPY price_scaler.pkl .
 
-# 7. Copy data files
-# train.csv - raw data (input for main.py to generate labels)
-COPY train.csv .
-# train_with_quality_label.csv - labeled data (used for model training)
-COPY train_with_quality_label.csv .
 
-# 8. Run the application
+# 7. Run the application
 # This will:
 #   - Load train.csv
 #   - Generate quality labels

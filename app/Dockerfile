@@ -19,10 +19,12 @@ COPY tfidf_vectorizer.pkl .
 COPY price_scaler.pkl .
 
 
-# 7. Run the application
+# 7. Copy data files
 # This will:
 #   - Load train.csv
 #   - Generate quality labels
 #   - Train the model
 #   - Save artifacts
-CMD ["python", "main.py"]
+CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+
+EXPOSE 8000

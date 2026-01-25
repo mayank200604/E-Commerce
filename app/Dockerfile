@@ -12,6 +12,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # 5. Copy main script
 COPY main.py .
+COPY api.py .
 
 # 6. Copy pre-trained model artifacts
 COPY model_logistic_regression.pkl .

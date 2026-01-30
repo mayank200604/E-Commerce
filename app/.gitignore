@@ -1,1 +1,12 @@
-app/*.csv
+# Data files
+*.csv
+
+# Model artifacts
+*.pkl
+*.joblib
+models/
+
+# Environment & cache
+.env
+__pycache__/
+*.pyc

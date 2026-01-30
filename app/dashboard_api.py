@@ -1,0 +1,180 @@
+from fastapi import FastAPI, Query
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+import os
+import pandas as pd
+import re
+from typing import Optional
+
+app = FastAPI(title="Product Quality Dashboard API")
+
+# Enable CORS for local development
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Load data once at startup
+print("Loading product data...")
+df = pd.read_csv("train_with_quality_label.csv")
+print(f"Loaded {len(df)} products")
+
+def extract_product_name(catalog_content):
+    """Extract product name from catalog content"""
+    match = re.search(r'Item Name:\s*(.+?)(?:\n|$)', catalog_content)
+    if match:
+        return match.group(1).strip()
+    return "Unknown Product"
+
+def extract_category(catalog_content):
+    """Extract or infer category from product name"""
+    name = extract_product_name(catalog_content).lower()
+    
+    # Simple category mapping based on keywords
+    if any(word in name for word in ['phone', 'laptop', 'tablet', 'headphone', 'camera', 'tv', 'electronics']):
+        return "Electronics"
+    elif any(word in name for word in ['shirt', 'pants', 'dress', 'shoes', 'clothing', 'jacket']):
+        return "Clothing"
+    elif any(word in name for word in ['kitchen', 'home', 'furniture', 'decor', 'bedding']):
+        return "Home & Kitchen"
+    elif any(word in name for word in ['book', 'novel', 'guide', 'manual']):
+        return "Books"
+    elif any(word in name for word in ['toy', 'game', 'puzzle', 'doll']):
+        return "Toys & Games"
+    elif any(word in name for word in ['beauty', 'cosmetic', 'skincare', 'makeup', 'shampoo']):
+        return "Beauty & Personal Care"
+    elif any(word in name for word in ['sports', 'fitness', 'outdoor', 'camping', 'bike']):
+        return "Sports & Outdoors"
+    elif any(word in name for word in ['food', 'snack', 'sauce', 'beverage', 'grocery']):
+        return "Food & Grocery"
+    else:
+        return "Other"
+
+def generate_mock_reviews(quality_label, catalog_content):
+    """Generate mock reviews based on quality label"""
+    product_name = extract_product_name(catalog_content)
+    
+    if quality_label == 2:  # Good Quality
+        return [
+            {"text": f"Excellent {product_name}! Works perfectly as described. Very satisfied with the purchase.", "quality": "good"},
+            {"text": "Great value for money. Highly recommend this to anyone looking for quality.", "quality": "good"},
+            {"text": "Fast shipping and product matches description perfectly.", "quality": "good"}
+        ]
+    elif quality_label == 1:  # Medium Risk
+        return [
+            {"text": f"The {product_name} is okay but could be better. Average quality.", "quality": "poor"},
+            {"text": "Works as expected but nothing special.", "quality": "good"},
+            {"text": "Decent for the price, but has some minor issues.", "quality": "poor"}
+        ]
+    else:  # Low Quality
+        return [
+            {"text": f"Poor quality {product_name}, not as shown in pictures.", "quality": "poor"},
+            {"text": "Disappointed with this purchase. Would not recommend.", "quality": "poor"},
+            {"text": "Not worth the money. Very unhappy with quality.", "quality": "poor"}
+        ]
+
+@app.get("/")
+def root():
+    return {
+        "status": "Dashboard API is running",
+        "total_products": len(df),
+        "endpoints": {
+            "products": "/api/products",
+            "product_detail": "/api/products/{product_id}",
+            "dashboard": "/dashboard"
+        }
+    }
+
+@app.get("/api/products")
+def get_products(
+    search: Optional[str] = None,
+    quality: Optional[int] = Query(None, ge=0, le=2),
+    limit: int = Query(100, le=1000)
+):
+    """Get list of products with optional filtering"""
+    filtered_df = df.copy()
+    
+    # Filter by quality
+    if quality is not None:
+        filtered_df = filtered_df[filtered_df['quality_label'] == quality]
+    
+    # Filter by search (product ID)
+    if search:
+        filtered_df = filtered_df[
+            filtered_df['sample_id'].astype(str).str.contains(search, case=False)
+        ]
+    
+    # Limit results
+    filtered_df = filtered_df.head(limit)
+    
+    # Format response
+    products = []
+    for _, row in filtered_df.iterrows():
+        products.append({
+            "id": f"PROD-{row['sample_id']}",
+            "sample_id": int(row['sample_id']),
+            "category": extract_category(row['catalog_content']),
+            "quality": int(row['quality_label']),
+            "product_name": extract_product_name(row['catalog_content']),
+            "price": float(row['price']),
+            "final_score": float(row['final_score'])
+        })
+    
+    return {
+        "total": len(products),
+        "products": products
+    }
+
+@app.get("/api/products/{product_id}")
+def get_product_detail(product_id: str):
+    """Get detailed information for a specific product"""
+    # Extract sample_id from product_id (format: PROD-12345)
+    sample_id = int(product_id.replace("PROD-", ""))
+    
+    # Find product
+    product_row = df[df['sample_id'] == sample_id]
+    
+    if len(product_row) == 0:
+        return {"error": "Product not found"}
+    
+    row = product_row.iloc[0]
+    
+    # Generate mock reviews based on quality
+    reviews = generate_mock_reviews(int(row['quality_label']), row['catalog_content'])
+    
+    return {
+        "id": f"PROD-{row['sample_id']}",
+        "sample_id": int(row['sample_id']),
+        "product_name": extract_product_name(row['catalog_content']),
+        "category": extract_category(row['catalog_content']),
+        "quality": int(row['quality_label']),
+        "price": float(row['price']),
+        "image_link": row['image_link'],
+        "catalog_content": row['catalog_content'],
+        "metrics": {
+            "word_count": int(row['word_count']),
+            "text_score": float(row['text_score']),
+            "price_outlier": bool(row['price_outlier']),
+            "price_sanity_score": float(row['price_sanity_score']),
+            "consistency_score": float(row['consistency_score']),
+            "final_score": float(row['final_score'])
+        },
+        "reviews": reviews
+    }
+
+@app.get("/dashboard")
+def serve_dashboard():
+    """Serve the dashboard HTML page"""
+    return FileResponse("dashboard.html")
+
+# Mount static files to serve CSS and JS
+# Must be done AFTER all routes to avoid conflicts
+app.mount("/static", StaticFiles(directory="."), name="static")
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

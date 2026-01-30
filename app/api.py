@@ -28,3 +28,4 @@ def run_model(request: RunRequest):
         }
 
     return {"message": "Nothing executed"}
+

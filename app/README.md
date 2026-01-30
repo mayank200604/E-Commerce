@@ -43,11 +43,26 @@ A separate test file exists but is **not used for model development** due to mis
 ├── train.ipynb
 │ └── Feature extraction, modeling, and evaluation
 │
+├── main.py
+│ └── Production ML pipeline script
+│
+├── api.py
+│ └── Original FastAPI endpoint
+│
+├── dashboard_api.py
+│ └── Dashboard backend API (serves real product data)
+│
+├── dashboard.html / dashboard.css / dashboard.js
+│ └── Product Quality Analysis Dashboard (frontend)
+│
 ├── train_with_quality_label.csv
 │ └── Generated dataset with engineered labels
 │
 ├── train.csv / test.csv
 │ └── Raw data (not included due to size)
+│
+├── *.pkl files
+│ └── Trained model artifacts (TF-IDF vectorizer, scaler, model)
 
 
 ---
@@ -144,6 +159,33 @@ Image features are documented as an explored but rejected modality.
 
 ---
 
+## Product Quality Dashboard
+
+A clean, minimal internal dashboard has been built to visualize and analyze product quality predictions.
+
+### Features
+- **Product Table**: Browse all products with quality status (Low/Medium/Good)
+- **Search & Filter**: Find products by ID or filter by quality level
+- **Detail Panel**: View comprehensive product information including:
+  - Product metadata (ID, name, category, price)
+  - Quality metrics (final score, text score, consistency score, etc.)
+  - ML model reasoning and feature importance
+  - Review quality analysis
+  - Product images
+
+### Tech Stack
+- **Frontend**: Vanilla HTML, CSS, JavaScript (no frameworks)
+- **Backend**: FastAPI with pandas for data processing
+- **Data Source**: `train_with_quality_label.csv` (75,000 products)
+
+### Dashboard Design Principles
+- Flat, readable, professional layout
+- Developer-focused (not flashy)
+- No animations or complex nested pages
+- Clean typography and color-coded quality badges
+
+---
+
 ## Key Learnings
 
 - Weak supervision can produce strong, usable labels when grounded in data.
@@ -155,20 +197,69 @@ Image features are documented as an explored but rejected modality.
 
 ## Requirements
 
-- Python 3.8+
-- pandas, numpy, scikit-learn, scipy
-- lightgbm (optional)
-- torch, torchvision (for image experiments)
+```
+pandas
+numpy
+scikit-learn
+scipy
+lightgbm (optional)
+torch
+torchvision (for image experiments)
+fastapi
+uvicorn
+```
+
+Install with:
+```bash
+pip install -r requirements.txt
+```
 
 ---
 
 ## How to Run
+
+### Option 1: Run ML Pipeline Only
 
 1. Run `main.ipynb`  
    → Performs EDA and generates `train_with_quality_label.csv`
 
 2. Run `train.ipynb`  
    → Trains and evaluates the final model
+
+3. Or run the production script:
+   ```bash
+   python main.py
+   ```
+
+### Option 2: Run Dashboard (Recommended)
+
+1. **Start the Dashboard API** (in one terminal):
+   ```bash
+   python dashboard_api.py
+   ```
+   This will start the backend API on `http://localhost:8000`
+
+2. **Start the HTTP Server** (in another terminal):
+   ```bash
+   python -m http.server 8080
+   ```
+
+3. **Open the Dashboard**:
+   Navigate to `http://localhost:8080/dashboard.html` in your browser
+
+4. **Explore Products**:
+   - Browse 100 products from the database
+   - Search by Product ID
+   - Filter by quality level (Low/Medium/Good)
+   - Click any product to see detailed analysis
+
+### API Endpoints
+
+- `GET /` - API status
+- `GET /api/products` - List products (with optional filters)
+  - Query params: `search`, `quality`, `limit`
+- `GET /api/products/{product_id}` - Get product details
+- `GET /dashboard` - Serve dashboard HTML
 
 ---
 
@@ -177,3 +268,4 @@ Image features are documented as an explored but rejected modality.
 **Mayank A**  
 B.Sc Computer Science  
 Focused on Applied Machine Learning & Real-World ML
+

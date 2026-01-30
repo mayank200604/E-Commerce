@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Quality Analysis Dashboard</title>
+    <meta name="description"
+        content="Internal developer dashboard for analyzing product quality predictions and review content quality">
+    <link rel="stylesheet" href="/static/dashboard.css?v=3">
+
+</head>
+
+<body>
+    <header class="header">
+        <h1>Product Quality Analysis Dashboard</h1>
+        <p class="subtitle">ML-Powered Product & Review Quality Analysis</p>
+        <button class="theme-toggle" id="themeToggle">
+            <span id="themeIcon">🌙</span>
+            <span id="themeText">Dark Mode</span>
+        </button>
+    </header>
+
+    <main class="container">
+        <!-- Filters Section -->
+        <section class="filters">
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search by Product ID..."
+                    aria-label="Search products by ID">
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all" id="filterAll">All Products</button>
+                <button class="filter-btn" data-filter="0" id="filterLow">Low Quality</button>
+                <button class="filter-btn" data-filter="1" id="filterMedium">Medium Risk</button>
+                <button class="filter-btn" data-filter="2" id="filterGood">Good Quality</button>
+            </div>
+        </section>
+
+        <!-- Products Table -->
+        <section class="table-container">
+            <table class="products-table" id="productsTable">
+                <thead>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Category</th>
+                        <th>Quality Status</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Populated by JavaScript -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- Detail Panel -->
+    <aside class="detail-panel" id="detailPanel">
+        <div class="panel-header">
+            <h2>Product Details</h2>
+            <button class="close-btn" id="closePanel" aria-label="Close panel">&times;</button>
+        </div>
+        <div class="panel-content" id="panelContent">
+            <!-- Populated by JavaScript -->
+        </div>
+    </aside>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <script src="/static/dashboard.js?v=2"></script>
+
+
+</body>
+
+</html>

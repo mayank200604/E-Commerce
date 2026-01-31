@@ -7,7 +7,7 @@
     <title>Product Quality Analysis Dashboard</title>
     <meta name="description"
         content="Internal developer dashboard for analyzing product quality predictions and review content quality">
-    <link rel="stylesheet" href="/static/dashboard.css?v=3">
+    <link rel="stylesheet" href="/static/dashboard.css?v=4">
 
 </head>
 
@@ -33,6 +33,7 @@
                 <button class="filter-btn" data-filter="0" id="filterLow">Low Quality</button>
                 <button class="filter-btn" data-filter="1" id="filterMedium">Medium Risk</button>
                 <button class="filter-btn" data-filter="2" id="filterGood">Good Quality</button>
+                <button class="viz-btn" id="tryVizBtn">Try Visualization</button>
             </div>
         </section>
 
@@ -67,7 +68,44 @@
     <!-- Overlay -->
     <div class="overlay" id="overlay"></div>
 
-    <script src="/static/dashboard.js?v=2"></script>
+    <!-- Visualization Modal -->
+    <div class="viz-modal" id="vizModal">
+        <div class="viz-modal-content">
+            <div class="viz-modal-header">
+                <h2>Data Visualization</h2>
+                <button class="close-btn" id="closeVizModal">&times;</button>
+            </div>
+            <div class="viz-modal-body">
+                <div class="viz-input-section">
+                    <label for="vizQuery">Enter your query:</label>
+                    <input type="text" id="vizQuery" placeholder="e.g., Show quality distribution as pie chart" />
+                    <button class="viz-submit-btn" id="vizSubmitBtn">Generate Chart</button>
+
+                    <div class="viz-examples">
+                        <p><strong>Example queries:</strong></p>
+                        <button class="example-query-btn" data-query="Show quality distribution as pie chart">Quality
+                            distribution (Pie)</button>
+                        <button class="example-query-btn"
+                            data-query="Show the quantity of products for each quality type">Quality counts
+                            (Bar)</button>
+                        <button class="example-query-btn" data-query="Show average price by quality level">Average price
+                            by quality</button>
+                    </div>
+                </div>
+
+                <div class="viz-result-section">
+                    <div class="viz-loading" id="vizLoading" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>Generating chart...</p>
+                    </div>
+                    <div class="viz-error" id="vizError" style="display: none;"></div>
+                    <div class="viz-chart" id="vizChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/dashboard.js?v=3"></script>
 
 
 </body>

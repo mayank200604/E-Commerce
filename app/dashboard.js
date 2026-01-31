@@ -33,7 +33,7 @@ async function fetchProducts(quality = null, search = null) {
     renderLoadingState();
 
     try {
-        let url = `${API_BASE_URL}/api/products?limit=100`;
+        let url = `${API_BASE_URL}/api/products?limit=500`;
         if (quality !== null && quality !== "all") {
             url += `&quality=${quality}`;
         }
@@ -349,6 +349,126 @@ function attachEventListeners() {
             closeDetailPanel();
         }
     });
+
+    // Visualization modal listeners
+    attachVisualizationListeners();
+}
+
+// Visualization Modal Functionality
+function attachVisualizationListeners() {
+    const tryVizBtn = document.getElementById("tryVizBtn");
+    const vizModal = document.getElementById("vizModal");
+    const closeVizModal = document.getElementById("closeVizModal");
+    const vizSubmitBtn = document.getElementById("vizSubmitBtn");
+    const vizQuery = document.getElementById("vizQuery");
+    const exampleBtns = document.querySelectorAll(".example-query-btn");
+
+    // Open modal
+    tryVizBtn.addEventListener("click", () => {
+        vizModal.classList.add("active");
+        overlay.classList.add("active");
+        vizQuery.focus();
+    });
+
+    // Close modal
+    closeVizModal.addEventListener("click", () => {
+        closeVizModalFunc(vizModal);
+    });
+
+    // Close on overlay click (only if clicking on viz modal)
+    overlay.addEventListener("click", (e) => {
+        if (vizModal.classList.contains("active")) {
+            closeVizModalFunc(vizModal);
+        }
+    });
+
+    // Submit visualization
+    vizSubmitBtn.addEventListener("click", () => {
+        const query = vizQuery.value.trim();
+        if (query) {
+            generateVisualization(query);
+        }
+    });
+
+    // Submit on Enter key
+    vizQuery.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+            const query = vizQuery.value.trim();
+            if (query) {
+                generateVisualization(query);
+            }
+        }
+    });
+
+    // Example query buttons
+    exampleBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const query = btn.dataset.query;
+            vizQuery.value = query;
+            generateVisualization(query);
+        });
+    });
+
+    // Keyboard shortcut to close viz modal (Escape key)
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && vizModal.classList.contains("active")) {
+            closeVizModalFunc(vizModal);
+        }
+    });
+}
+
+function closeVizModalFunc(modal) {
+    const vizModal = modal || document.getElementById("vizModal");
+    vizModal.classList.remove("active");
+
+    // Clear/reset the modal content
+    const vizQuery = document.getElementById("vizQuery");
+    const vizLoading = document.getElementById("vizLoading");
+    const vizError = document.getElementById("vizError");
+    const vizChart = document.getElementById("vizChart");
+
+    vizQuery.value = "";  // Clear input
+    vizLoading.style.display = "none";  // Hide loading
+    vizError.style.display = "none";  // Hide error
+    vizChart.innerHTML = "";  // Clear chart
+
+    // Only close overlay if detail panel is also closed
+    if (!detailPanel.classList.contains("open")) {
+        overlay.classList.remove("active");
+    }
+}
+
+async function generateVisualization(query) {
+    const vizLoading = document.getElementById("vizLoading");
+    const vizError = document.getElementById("vizError");
+    const vizChart = document.getElementById("vizChart");
+
+    // Show loading
+    vizLoading.style.display = "block";
+    vizError.style.display = "none";
+    vizChart.innerHTML = "";
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/visualize?query=${encodeURIComponent(query)}`);
+        const data = await response.json();
+
+        // Hide loading
+        vizLoading.style.display = "none";
+
+        if (data.error) {
+            // Show error
+            vizError.textContent = data.error;
+            vizError.style.display = "block";
+        } else if (data.success) {
+            // Show chart
+            vizChart.innerHTML = `<img src="${data.image}" alt="${data.query}" />`;
+        }
+    } catch (error) {
+        console.error("Error generating visualization:", error);
+        vizLoading.style.display = "none";
+        vizError.textContent = `Error: ${error.message}`;
+        vizError.style.display = "block";
+    }
 }
 
 // Initialize on load

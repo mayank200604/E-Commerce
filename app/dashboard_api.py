@@ -1,22 +1,20 @@
 from fastapi import FastAPI, Query
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 import os
 import pandas as pd
 import re
 from typing import Optional
+import matplotlib
+matplotlib.use('Agg')  # Use non-interactive backend
+import matplotlib.pyplot as plt
+import seaborn as sns
+import io
+import base64
 
 app = FastAPI(title="Product Quality Dashboard API")
 
-# Enable CORS for local development
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# No CORS needed since frontend is served from the same origin (localhost:8000)
 
 # Load data once at startup
 print("Loading product data...")
@@ -93,7 +91,7 @@ def root():
 def get_products(
     search: Optional[str] = None,
     quality: Optional[int] = Query(None, ge=0, le=2),
-    limit: int = Query(100, le=1000)
+    limit: int = Query(500, le=1000)
 ):
     """Get list of products with optional filtering"""
     filtered_df = df.copy()
@@ -170,6 +168,94 @@ def get_product_detail(product_id: str):
 def serve_dashboard():
     """Serve the dashboard HTML page"""
     return FileResponse("dashboard.html")
+
+@app.get("/api/visualize")
+def generate_visualization(query: str = Query(..., description="Natural language query for visualization")):
+    """Generate visualization chart from natural language query"""
+    
+    # Configuration
+    QUALITY_LABELS = {0: "Low Quality", 1: "Medium Quality", 2: "High Quality"}
+    QUALITY_COLORS = {0: "#FF6B6B", 1: "#FFD93D", 2: "#6BCF7F"}
+    
+    sns.set_style("whitegrid")
+    
+    try:
+        query_lower = query.lower()
+        
+        # Parse query
+        chart_type = "pie" if "pie" in query_lower else "bar"
+        
+        # Determine what to visualize
+        if "quality" in query_lower:
+            # Calculate quality distribution
+            result = df['quality_label'].value_counts().sort_index()
+            labels = [QUALITY_LABELS[i] for i in result.index]
+            colors = [QUALITY_COLORS[i] for i in result.index]
+            title = query
+            
+            # Create figure
+            fig, ax = plt.subplots(figsize=(10, 6))
+            
+            if chart_type == "pie":
+                ax.pie(result.values, labels=labels, colors=colors,
+                       autopct='%1.1f%%', startangle=90,
+                       textprops={'fontsize': 11, 'weight': 'bold'})
+                ax.set_title(title, fontsize=14, weight='bold', pad=20)
+            else:
+                bars = ax.bar(labels, result.values, color=colors,
+                             edgecolor='black', linewidth=1.5, alpha=0.8)
+                ax.set_ylabel('Number of Products', fontsize=12, weight='bold')
+                ax.set_xlabel('Quality Level', fontsize=12, weight='bold')
+                ax.set_title(title, fontsize=14, weight='bold', pad=20)
+                
+                # Add value labels
+                for bar in bars:
+                    height = bar.get_height()
+                    ax.text(bar.get_x() + bar.get_width()/2., height,
+                           f'{int(height):,}', ha='center', va='bottom',
+                           fontsize=11, weight='bold')
+                ax.grid(axis='y', alpha=0.3)
+            
+        elif "price" in query_lower:
+            # Average price by quality
+            result = df.groupby('quality_label')['price'].mean().sort_index()
+            labels = [QUALITY_LABELS[i] for i in result.index]
+            colors = [QUALITY_COLORS[i] for i in result.index]
+            title = query
+            
+            fig, ax = plt.subplots(figsize=(10, 6))
+            bars = ax.bar(labels, result.values, color=colors,
+                         edgecolor='black', linewidth=1.5, alpha=0.8)
+            ax.set_ylabel('Average Price ($)', fontsize=12, weight='bold')
+            ax.set_xlabel('Quality Level', fontsize=12, weight='bold')
+            ax.set_title(title, fontsize=14, weight='bold', pad=20)
+            
+            for bar in bars:
+                height = bar.get_height()
+                ax.text(bar.get_x() + bar.get_width()/2., height,
+                       f'${height:.2f}', ha='center', va='bottom',
+                       fontsize=11, weight='bold')
+            ax.grid(axis='y', alpha=0.3)
+        
+        else:
+            return {"error": "Could not understand query. Try: 'Show quality distribution as pie chart' or 'Show average price by quality'"}
+        
+        # Convert plot to base64 image
+        plt.tight_layout()
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', dpi=150, bbox_inches='tight')
+        buf.seek(0)
+        img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+        plt.close(fig)
+        
+        return {
+            "success": True,
+            "image": f"data:image/png;base64,{img_base64}",
+            "query": query
+        }
+        
+    except Exception as e:
+        return {"error": str(e)}
 
 # Mount static files to serve CSS and JS
 # Must be done AFTER all routes to avoid conflicts

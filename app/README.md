@@ -55,6 +55,9 @@ A separate test file exists but is **not used for model development** due to mis
 ├── dashboard.html / dashboard.css / dashboard.js
 │ └── Product Quality Analysis Dashboard (frontend)
 │
+├── visualization.py
+│ └── Standalone visualization script for query-based chart generation
+│
 ├── train_with_quality_label.csv
 │ └── Generated dataset with engineered labels
 │
@@ -172,10 +175,20 @@ A clean, minimal internal dashboard has been built to visualize and analyze prod
   - ML model reasoning and feature importance
   - Review quality analysis
   - Product images
+- **📊 Data Visualization** (NEW): Interactive query-based chart generation
+  - Natural language query interface
+  - Automatic chart type selection (bar or pie)
+  - Supported visualizations:
+    - Quality distribution across products
+    - Average price by quality level
+    - Product counts by quality category
+  - Real-time chart generation with matplotlib
+  - Modal popup interface for clean UX
 
 ### Tech Stack
 - **Frontend**: Vanilla HTML, CSS, JavaScript (no frameworks)
 - **Backend**: FastAPI with pandas for data processing
+- **Visualization**: Matplotlib (server-side rendering), Seaborn
 - **Data Source**: `train_with_quality_label.csv` (75,000 products)
 
 ### Dashboard Design Principles
@@ -183,6 +196,7 @@ A clean, minimal internal dashboard has been built to visualize and analyze prod
 - Developer-focused (not flashy)
 - No animations or complex nested pages
 - Clean typography and color-coded quality badges
+- Query-based visualization with automatic chart selection
 
 ---
 
@@ -202,6 +216,8 @@ pandas
 numpy
 scikit-learn
 scipy
+matplotlib
+seaborn
 lightgbm (optional)
 torch
 torchvision (for image experiments)
@@ -245,13 +261,23 @@ pip install -r requirements.txt
    ```
 
 3. **Open the Dashboard**:
-   Navigate to `http://localhost:8080/dashboard.html` in your browser
+   Navigate to `http://localhost:8000/dashboard` in your browser
 
 4. **Explore Products**:
-   - Browse 100 products from the database
+   - Browse products from the database
    - Search by Product ID
    - Filter by quality level (Low/Medium/Good)
    - Click any product to see detailed analysis
+
+5. **Try Visualization** (NEW):
+   - Click the "Try Visualization" button in the filters section
+   - Enter a natural language query like:
+     - "Show quality distribution as pie chart"
+     - "Show the quantity of products for each quality type"
+     - "Show average price by quality level"
+   - Or click one of the example queries
+   - Charts are generated in real-time and displayed in a modal popup
+   - Close the modal to reset and try another query
 
 ### API Endpoints
 
@@ -259,6 +285,9 @@ pip install -r requirements.txt
 - `GET /api/products` - List products (with optional filters)
   - Query params: `search`, `quality`, `limit`
 - `GET /api/products/{product_id}` - Get product details
+- `GET /api/visualize` - Generate visualization chart from query (NEW)
+  - Query param: `query` (natural language query string)
+  - Returns: Base64-encoded PNG image
 - `GET /dashboard` - Serve dashboard HTML
 
 ---

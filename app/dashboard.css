@@ -462,3 +462,227 @@ body {
         width: 100%;
     }
 }
+
+/* Visualization Button */
+.viz-btn {
+    padding: 10px 20px;
+    border: 2px solid var(--accent-color);
+    background-color: var(--accent-color);
+    color: #ffffff;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 600;
+    margin-left: auto;
+}
+
+.viz-btn:hover {
+    background-color: var(--accent-hover);
+    border-color: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+}
+
+/* Visualization Modal */
+.viz-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.viz-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.viz-modal-content {
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    max-width: 900px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.viz-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    background-color: var(--bg-secondary);
+    z-index: 10;
+}
+
+.viz-modal-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.viz-modal-body {
+    padding: 28px;
+}
+
+.viz-input-section {
+    margin-bottom: 24px;
+}
+
+.viz-input-section label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+#vizQuery {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s ease;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+#vizQuery:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.viz-submit-btn {
+    padding: 12px 24px;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.viz-submit-btn:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+}
+
+.viz-examples {
+    margin-top: 16px;
+    padding: 16px;
+    background-color: var(--bg-tertiary);
+    border-radius: 8px;
+}
+
+.viz-examples p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+}
+
+.example-query-btn {
+    display: inline-block;
+    padding: 8px 14px;
+    margin: 4px 6px 4px 0;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.example-query-btn:hover {
+    background-color: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
+
+.viz-result-section {
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.viz-loading {
+    text-align: center;
+}
+
+.spinner {
+    border: 4px solid var(--border-color);
+    border-top: 4px solid var(--accent-color);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.viz-loading p {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.viz-error {
+    background-color: var(--error-bg);
+    color: var(--error-text);
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--error-border, transparent);
+    font-size: 14px;
+}
+
+.viz-chart {
+    width: 100%;
+}
+
+.viz-chart img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: var(--shadow-md);
+}
+
+@media (max-width: 768px) {
+    .viz-modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .viz-btn {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 8px;
+    }
+}

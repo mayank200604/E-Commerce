@@ -238,7 +238,17 @@ def generate_visualization(query: str = Query(..., description="Natural language
             ax.grid(axis='y', alpha=0.3)
         
         else:
-            return {"error": "Could not understand query. Try: 'Show quality distribution as pie chart' or 'Show average price by quality'"}
+            return {
+                "error": "This visualization is not available.\n\n"
+                        "Available Data for Visualization:\n"
+                        "• Quality labels (Low/Medium/High)\n"
+                        "• Price\n"
+                        "• Product counts\n\n"
+                        "Supported Chart Types:\n"
+                        "• Bar charts\n"
+                        "• Pie charts\n\n"
+                        "Please search for charts using only these available data types."
+            }
         
         # Convert plot to base64 image
         plt.tight_layout()

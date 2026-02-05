@@ -18,8 +18,8 @@ app = FastAPI(title="Product Quality Dashboard API")
 
 # Load data once at startup
 print("Loading product data...")
-df = pd.read_csv("train_with_quality_label.csv")
-print(f"Loaded {len(df)} products")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+df = pd.read_csv(os.path.join(BASE_DIR, "train_with_quality_label.csv"))
 
 def extract_product_name(catalog_content):
     """Extract product name from catalog content"""
@@ -164,10 +164,11 @@ def get_product_detail(product_id: str):
         "reviews": reviews
     }
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 @app.get("/dashboard")
 def serve_dashboard():
-    """Serve the dashboard HTML page"""
-    return FileResponse("dashboard.html")
+    return FileResponse(os.path.join(BASE_DIR, "dashboard.html"))
 
 @app.get("/api/visualize")
 def generate_visualization(query: str = Query(..., description="Natural language query for visualization")):
@@ -269,8 +270,9 @@ def generate_visualization(query: str = Query(..., description="Natural language
 
 # Mount static files to serve CSS and JS
 # Must be done AFTER all routes to avoid conflicts
-app.mount("/static", StaticFiles(directory="."), name="static")
+app.mount(
+    "/static",
+    StaticFiles(directory=os.path.dirname(os.path.abspath(__file__))),
+    name="static"
+)
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)

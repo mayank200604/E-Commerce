@@ -1,5 +1,5 @@
-// API Configuration
-const API_BASE_URL = "http://localhost:8000";
+// API Configuration - Dynamic URL for both local and production (Render)
+const API_BASE_URL = window.location.origin;
 
 // Data cache
 let allProducts = [];

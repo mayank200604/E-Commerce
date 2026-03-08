@@ -127,7 +127,7 @@ Once deployed, navigate your browser to `http://localhost:8000/dashboard` to acc
 
 The backend application is fully prepared for fast production environments. The system is structurally prepared for backend deployment on **Render**, exposing a **REST API-based inference endpoint** and public dashboard access over HTTP reliably.
 
-**Live Deployment:** [https://churn-prediction-qq8x.onrender.com]
+**Live Deployment:** [https://churn-prediction-qq8x.onrender.com/dashboard]
 
 ## Key Highlights
 

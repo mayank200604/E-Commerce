@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon Product Quality Prediction System</title>
+    <meta name="description" content="From Model to ML System — Understanding Product Quality at Scale.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/landing.css">
+</head>
+<body>
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="glow-orb orb-3"></div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fa-solid fa-layer-group text-gradient"></i> ML<span class="text-gradient">Quality</span>
+            </div>
+            <div class="nav-links">
+                <a href="#about">About</a>
+                <a href="#features">Features</a>
+                <a href="#process">How it Works</a>
+                <a href="#limitations">Limitations</a>
+            </div>
+            <a href="/dashboard" class="btn btn-outline">
+                <span>View Dashboard</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero glass-container">
+            <div class="hero-content">
+                <div class="badge">Machine Learning System</div>
+                <h1 class="hero-title">Amazon Product Quality <br><span class="text-gradient">Prediction System</span></h1>
+                <p class="hero-subtitle">From Model to ML System — Understanding Product Quality at Scale</p>
+                <p class="hero-description text-gray">
+                    This project transitions from building basic isolated ML models to developing a complete, 
+                    integrated ML system designed to evaluate and predict product quality at scale.
+                </p>
+                <div class="hero-cta">
+                    <a href="/dashboard" class="btn btn-primary pulse-btn">
+                        Open Dashboard
+                        <i class="fa-solid fa-chart-line"></i>
+                    </a>
+                    <a href="#process" class="btn btn-secondary">
+                        How it Works
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why This Project & Differences -->
+        <section id="about" class="grid-2-col">
+            <div class="card grid-span-1 glass-card fade-up">
+                <div class="card-icon"><i class="fa-solid fa-bullseye"></i></div>
+                <h2 class="card-title">Why This Project?</h2>
+                <p class="text-gray">
+                    Recreating a simplified version of how major e-commerce platforms evaluate product catalog quality internally. 
+                    Instead of relying on expensive manual labeling, this system utilizes <strong>weakly supervised learning</strong> 
+                    with synthetic proxy labels to scale efficiently.
+                </p>
+            </div>
+            
+            <div class="card grid-span-1 glass-card fade-up delay-1">
+                <div class="card-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                <h2 class="card-title">What Makes It Different?</h2>
+                <p class="text-gray">
+                    We employ intelligent rule-based label generation to train the model, looking for hidden patterns before customer feedback even arrives:
+                </p>
+                <ul class="feature-list mt-top">
+                    <li><i class="fa-solid fa-check text-gradient"></i> Text Richness & Description Depth</li>
+                    <li><i class="fa-solid fa-check text-gradient"></i> Price-to-Category Consistency</li>
+                    <li><i class="fa-solid fa-check text-gradient"></i> IQR Outlier Detection Sanity Checks</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Key Features Section -->
+        <section id="features" class="section-padding">
+            <div class="section-header text-center fade-up">
+                <h2>Key Features</h2>
+                <p class="text-gray">A complete end-to-end analytical toolset</p>
+            </div>
+            
+            <div class="feature-grid">
+                <div class="feature-card glass-card fade-up">
+                    <div class="feature-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    <h3>Intelligent Search</h3>
+                    <p class="text-gray">Instantly locate specific products across massive catalogs using ID lookups.</p>
+                </div>
+                <div class="feature-card glass-card fade-up delay-1">
+                    <div class="feature-icon"><i class="fa-solid fa-filter"></i></div>
+                    <h3>Smart Filtering</h3>
+                    <p class="text-gray">Segment and isolate data by predicted quality tiers (Low, Medium, High).</p>
+                </div>
+                <div class="feature-card glass-card fade-up delay-2">
+                    <div class="feature-icon"><i class="fa-solid fa-microscope"></i></div>
+                    <h3>Deep Analysis</h3>
+                    <p class="text-gray">View word counts, price sanity indicators, and consistency scoring per item.</p>
+                </div>
+                <div class="feature-card glass-card fade-up delay-3">
+                    <div class="feature-icon"><i class="fa-solid fa-chart-pie"></i></div>
+                    <h3>Dynamic Visuals</h3>
+                    <p class="text-gray">Generate AI-driven pie and bar charts directly from natural language queries.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Flow -->
+        <section id="process" class="section-padding flow-section glass-container fade-up">
+            <div class="section-header text-center">
+                <h2>How It Works</h2>
+            </div>
+            
+            <div class="process-flow">
+                <div class="flow-step">
+                    <div class="flow-icon"><i class="fa-solid fa-database"></i></div>
+                    <h4>Product Data</h4>
+                    <p>Raw catalog ingestion</p>
+                </div>
+                <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="flow-step">
+                    <div class="flow-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+                    <h4>Rule-based Scoring</h4>
+                    <p>Proxy label generation</p>
+                </div>
+                <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="flow-step">
+                    <div class="flow-icon"><i class="fa-solid fa-brain"></i></div>
+                    <h4>ML Model</h4>
+                    <p>Training & Inference</p>
+                </div>
+                <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="flow-step final-step">
+                    <div class="flow-icon"><i class="fa-solid fa-ranking-star"></i></div>
+                    <h4>Quality Classification</h4>
+                    <p>Low / Medium / High</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why It Matters -->
+        <section class="highlight-section glass-card fade-up">
+            <div class="highlight-content">
+                <h2>Why It Matters</h2>
+                <p>
+                    Identifying low-quality or fraudulent listings <strong>before</strong> they reach the customer is crucial for e-commerce integrity. 
+                    This system empowers company-side decision-makers to proactively curate the catalog, saving review processing time and protecting user trust.
+                </p>
+            </div>
+        </section>
+
+        <!-- Two Column: Limitations & Future -->
+        <section id="limitations" class="grid-2-col section-padding">
+            <div class="card glass-card fade-up border-warning">
+                <div class="card-icon warning"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <h2 class="card-title">Current Limitations</h2>
+                <ul class="feature-list">
+                    <li><i class="fa-solid fa-xmark"></i> No actual user reviews integrated yet</li>
+                    <li><i class="fa-solid fa-xmark"></i> Reliance on rigid rule-based weak labels</li>
+                    <li><i class="fa-solid fa-xmark"></i> Simplified localized system architecture</li>
+                </ul>
+            </div>
+            
+            <div class="card glass-card fade-up delay-1 border-success">
+                <div class="card-icon success"><i class="fa-solid fa-rocket"></i></div>
+                <h2 class="card-title">Future Improvements</h2>
+                <ul class="feature-list">
+                    <li><i class="fa-solid fa-arrow-trend-up"></i> Automatic dataset updates & CI/CD</li>
+                    <li><i class="fa-solid fa-arrow-trend-up"></i> Exportable analytical reports (PDF/CSV)</li>
+                    <li><i class="fa-solid fa-arrow-trend-up"></i> Advanced dynamic filtering</li>
+                    <li><i class="fa-solid fa-arrow-trend-up"></i> Real-time inference pipelines</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- My Contribution -->
+        <section class="contribution-section glass-container text-center fade-up mt-padding">
+            <div class="badge">Builder Highlight</div>
+            <h2>My Contribution</h2>
+            <p class="text-gray max-w-lg mx-auto">
+                Designed and engineered the <strong>weak supervision proxy labeling system</strong>, 
+                bridging the gap between unlabeled raw data and actionable ML model training without the need for expensive human annotators.
+            </p>
+        </section>
+
+        <!-- Final CTA -->
+        <section class="final-cta text-center fade-up mt-padding">
+            <h2>Ready to see it in action?</h2>
+            <p class="text-gray">Experience the classification pipeline and data visualizations live.</p>
+            <a href="/dashboard" class="btn btn-primary btn-large glow-effect mt-top">
+                Open Dashboard <i class="fa-solid fa-rocket"></i>
+            </a>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Mayank A. Building systems, not just models.</p>
+    </footer>
+
+    <script>
+        // Simple intersection observer for scroll animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-up').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

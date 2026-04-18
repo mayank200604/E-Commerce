@@ -8,12 +8,20 @@ Description: End-to-end ML pipeline for assessing product catalog quality
 import pandas as pd
 import numpy as np
 import joblib
+import os
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import StandardScaler
 from scipy.sparse import hstack
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
+
+# Resolve paths relative to this file
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "..", "data")
+MODELS_DIR = os.path.join(BASE_DIR, "..", "models")
+os.makedirs(DATA_DIR, exist_ok=True)
+os.makedirs(MODELS_DIR, exist_ok=True)
 
 
 def engineer_weak_labels(df):
@@ -153,12 +161,15 @@ def train_baseline_model(df):
     
     # Save model artifacts using joblib
     print("\nSaving model artifacts...")
-    joblib.dump(model, 'model_logistic_regression.pkl')
-    joblib.dump(tfidf, 'tfidf_vectorizer.pkl')
-    joblib.dump(scaler, 'price_scaler.pkl')
-    print("✓ Model saved to: model_logistic_regression.pkl")
-    print("✓ TF-IDF vectorizer saved to: tfidf_vectorizer.pkl")
-    print("✓ Price scaler saved to: price_scaler.pkl")
+    model_path = os.path.join(MODELS_DIR, 'model_logistic_regression.pkl')
+    tfidf_path = os.path.join(MODELS_DIR, 'tfidf_vectorizer.pkl')
+    scaler_path = os.path.join(MODELS_DIR, 'price_scaler.pkl')
+    joblib.dump(model, model_path)
+    joblib.dump(tfidf, tfidf_path)
+    joblib.dump(scaler, scaler_path)
+    print(f"✓ Model saved to: {model_path}")
+    print(f"✓ TF-IDF vectorizer saved to: {tfidf_path}")
+    print(f"✓ Price scaler saved to: {scaler_path}")
     
     return model, tfidf, scaler
 
@@ -178,7 +189,8 @@ def main():
     
     # Step 1: Load data
     print("Loading training data...")
-    df = pd.read_csv('train.csv')
+    train_csv = os.path.join(DATA_DIR, 'train.csv')
+    df = pd.read_csv(train_csv)
     print(f"Loaded {len(df):,} product entries\n")
     
     # Step 2: Engineer weak labels
@@ -194,8 +206,9 @@ def main():
     
     # Step 3: Save labeled dataset
     print("Saving labeled dataset...")
-    df.to_csv("train_with_quality_label.csv", index=False)
-    print("✓ Saved to: train_with_quality_label.csv\n")
+    output_csv = os.path.join(DATA_DIR, 'train_with_quality_label.csv')
+    df.to_csv(output_csv, index=False)
+    print(f"✓ Saved to: {output_csv}\n")
     
     # Step 4: Train baseline model
     print("Training baseline model (Text + Price)...")

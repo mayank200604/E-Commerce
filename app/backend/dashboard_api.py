@@ -12,14 +12,25 @@ import seaborn as sns
 import io
 import base64
 
+# Resolve paths relative to this file's location
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "..", "data")
+FRONTEND_DIR = os.path.join(BASE_DIR, "..", "frontend")
+
 app = FastAPI(title="Product Quality Dashboard API")
 
 # No CORS needed since frontend is served from the same origin (localhost:8000)
 
 # Load data once at startup
+DATA_FILE = os.path.join(DATA_DIR, "train_with_quality_label.csv")
 print("Loading product data...")
-df = pd.read_csv("train_with_quality_label.csv")
-print(f"Loaded {len(df)} products")
+if not os.path.exists(DATA_FILE):
+    print(f"ERROR: Data file not found at {DATA_FILE}")
+    print("Please run backend/main.py first to generate the dataset.")
+    df = None
+else:
+    df = pd.read_csv(DATA_FILE)
+    print(f"Loaded {len(df)} products")
 
 def extract_product_name(catalog_content):
     """Extract product name from catalog content"""
@@ -75,11 +86,18 @@ def generate_mock_reviews(quality_label, catalog_content):
             {"text": "Not worth the money. Very unhappy with quality.", "quality": "poor"}
         ]
 
+
 @app.get("/")
-def root():
+def serve_landing():
+    """Serve the landing HTML page"""
+    return FileResponse(os.path.join(FRONTEND_DIR, "landing.html"))
+
+@app.get("/api/status")
+def status():
     return {
         "status": "Dashboard API is running",
-        "total_products": len(df),
+        "total_products": len(df) if df is not None else 0,
+        "data_loaded": df is not None,
         "endpoints": {
             "products": "/api/products",
             "product_detail": "/api/products/{product_id}",
@@ -94,6 +112,8 @@ def get_products(
     limit: int = Query(500, le=1000)
 ):
     """Get list of products with optional filtering"""
+    if df is None:
+        return {"error": "Data not loaded. Run backend/main.py to generate the dataset.", "total": 0, "products": []}
     filtered_df = df.copy()
     
     # Filter by quality
@@ -130,6 +150,8 @@ def get_products(
 @app.get("/api/products/{product_id}")
 def get_product_detail(product_id: str):
     """Get detailed information for a specific product"""
+    if df is None:
+        return {"error": "Data not loaded. Run backend/main.py to generate the dataset."}
     # Extract sample_id from product_id (format: PROD-12345)
     sample_id = int(product_id.replace("PROD-", ""))
     
@@ -167,11 +189,13 @@ def get_product_detail(product_id: str):
 @app.get("/dashboard")
 def serve_dashboard():
     """Serve the dashboard HTML page"""
-    return FileResponse("dashboard.html")
+    return FileResponse(os.path.join(FRONTEND_DIR, "dashboard.html"))
 
 @app.get("/api/visualize")
 def generate_visualization(query: str = Query(..., description="Natural language query for visualization")):
     """Generate visualization chart from natural language query"""
+    if df is None:
+        return {"error": "Data not loaded. Run backend/main.py to generate the dataset."}
     
     # Configuration
     QUALITY_LABELS = {0: "Low Quality", 1: "Medium Quality", 2: "High Quality"}
@@ -267,9 +291,9 @@ def generate_visualization(query: str = Query(..., description="Natural language
     except Exception as e:
         return {"error": str(e)}
 
-# Mount static files to serve CSS and JS
+# Mount static files to serve CSS and JS from the frontend directory
 # Must be done AFTER all routes to avoid conflicts
-app.mount("/static", StaticFiles(directory="."), name="static")
+app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
 
 if __name__ == "__main__":
     import uvicorn

@@ -1,5 +1,6 @@
 # Data files
 *.csv
+!data/train_with_quality_label.csv
 
 # Model artifacts
 *.pkl

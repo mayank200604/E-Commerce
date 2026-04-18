@@ -14,8 +14,8 @@ import base64
 
 # ── Path resolution ───────────────────────────────────────────────────────────
 BASE_DIR     = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR     = os.path.join(BASE_DIR, "..", "data")
-FRONTEND_DIR = os.path.join(BASE_DIR, "..", "frontend")
+DATA_DIR     = os.path.abspath(os.path.join(BASE_DIR, "..", "data"))
+FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "frontend"))
 DATA_FILE    = os.path.join(DATA_DIR, "train_with_quality_label.csv")
 
 app = FastAPI(title="Product Quality Dashboard API")
